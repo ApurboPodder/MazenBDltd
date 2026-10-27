@@ -225,7 +225,10 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
     showFaceToggle.disabled = true;
     try {
       const nextIndex = (currentModelIndex + direction + previewModels.length) % previewModels.length;
-      const modelContent = await loadModel(getModelPath(previewModels[nextIndex]));
+      status.hidden = false;
+      status.textContent = "Loading " + previewModels[nextIndex].title + " GLB…";
+      const nextPath = getModelPath(previewModels[nextIndex]);
+      const modelContent = await loadModel(nextPath);
       const previousModel = models.children[0];
       const nextModel = new THREE.Group();
       nextModel.add(modelContent);
@@ -234,9 +237,19 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
         fitModel(nextModel);
         models.add(nextModel);
       }
+      removeFaceModel();
       currentModelIndex = nextIndex;
-      displayedModelPath = getModelPath(previewModels[currentModelIndex]);
+      displayedModelPath = nextPath;
       updateProjectCaption(previewModels[currentModelIndex]);
+      if (showFaceToggle.checked && previewModels[currentModelIndex].visiblePath !== nextPath) {
+        try {
+          await addFaceModel(previewModels[currentModelIndex]);
+          updateFaceModeStatus("Face shown alongside the model.");
+        } catch (faceError) {
+          updateFaceModeStatus("The face GLB could not be loaded.");
+          console.error("Could not load face GLB", faceError);
+        }
+      }
       status.textContent = "Preview ready.";
       status.hidden = true;
     } catch (error) {
@@ -262,15 +275,37 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
   nextModelButton.addEventListener("click", selectNextModel);
 
   function getModelPath(model) {
-    if (!model) return "";
-    if (showFaceToggle.checked) return model.visiblePath || model.hiddenPath || "";
-    return model.hiddenPath || model.visiblePath || "";
+    return model ? model.hiddenPath || model.visiblePath || "" : "";
   }
 
-  function updateFaceModeStatus() {
-    faceStatus.textContent = showFaceToggle.checked
-      ? "Face shown: GLB2 is used when available; GLB1 variants are hidden."
-      : "Face hidden: GLB1 is used when available; GLB2 variants are hidden.";
+  function removeFaceModel() {
+    if (!activeFaceModel) return;
+    scene.remove(activeFaceModel);
+    disposeModel(activeFaceModel);
+    activeFaceModel = null;
+  }
+
+  async function addFaceModel(model) {
+    const facePath = model && model.visiblePath;
+    const mainPath = getModelPath(model);
+    if (!facePath || facePath === mainPath) return false;
+    const faceContent = await loadModel(facePath);
+    const faceGroup = new THREE.Group();
+    faceGroup.add(faceContent);
+    fitModelToReference(faceGroup);
+    scene.add(faceGroup);
+    activeFaceModel = faceGroup;
+    return true;
+  }
+
+  function updateFaceModeStatus(message) {
+    if (message) {
+      faceStatus.textContent = message;
+    } else {
+      faceStatus.textContent = showFaceToggle.checked
+        ? "Face shown alongside the model when a GLB2 face file is available."
+        : "Face hidden.";
+    }
   }
 
   async function changeFaceMode() {
@@ -278,30 +313,27 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
     updateFaceModeStatus();
     if (!previewModels.length || isSwitchingModels) return;
     const selected = previewModels[currentModelIndex];
-    const nextPath = getModelPath(selected);
-    if (!nextPath || nextPath === displayedModelPath) {
-      scheduleNextModel();
-      return;
-    }
     isSwitchingModels = true;
     showFaceToggle.disabled = true;
     try {
-      const modelContent = await loadModel(nextPath);
-      const nextModel = new THREE.Group();
-      nextModel.add(modelContent);
-      const previousModel = models.children[0];
-      if (previousModel) {
-        models.remove(previousModel);
-        disposeModel(previousModel);
+      if (showFaceToggle.checked) {
+        if (!selected.visiblePath || selected.visiblePath === getModelPath(selected)) {
+          updateFaceModeStatus("No separate GLB2 face file is available for this project.");
+        } else {
+          status.hidden = false;
+          status.textContent = "Loading face alongside " + selected.title + "…";
+          removeFaceModel();
+          const added = await addFaceModel(selected);
+          updateFaceModeStatus(added ? "Face shown alongside the model." : "No separate GLB2 face file is available for this project.");
+          status.hidden = true;
+        }
+      } else {
+        removeFaceModel();
+        updateFaceModeStatus("Face hidden.");
       }
-      fitModel(nextModel);
-      models.add(nextModel);
-      displayedModelPath = nextPath;
-      updateProjectCaption(selected);
-      status.textContent = "Preview ready.";
-      status.hidden = true;
     } catch (error) {
-      showError("The selected face variant could not be loaded.", error);
+      updateFaceModeStatus("The face GLB could not be loaded.");
+      console.error("Could not load face GLB", error);
     } finally {
       isSwitchingModels = false;
       showFaceToggle.disabled = false;
@@ -311,7 +343,12 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
 
   async function loadModels() {
     try {
-      const projects = await window.loadProjects();
+      status.hidden = false;
+      status.textContent = "Loading project list…";
+      const projectResponse = await fetch("project-data.json", { cache: "no-store" });
+      if (!projectResponse.ok) throw new Error("Project list request failed (" + projectResponse.status + ").");
+      const projects = await projectResponse.json();
+      if (!Array.isArray(projects)) throw new Error("The project list has an invalid format.");
       let discoveryWarnings = [];
       const projectsByFolder = projects
         .filter((project) => typeof project.sourceFolder === "string")
@@ -371,6 +408,7 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
       nextModelButton.disabled = previewModels.length < 2;
       if (!previewModels.length) throw new Error("No eyewear GLB models were found in the project data or project folders.");
       const modelPath = getModelPath(previewModels[0]);
+      status.textContent = "Loading " + previewModels[0].title + " GLB…";
       const modelContent = await loadModel(modelPath);
       const model = new THREE.Group();
       model.add(modelContent);
@@ -379,7 +417,16 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
       displayedModelPath = modelPath;
       updateProjectCaption(previewModels[0]);
       updateFaceModeStatus();
-      const warnings = [...(window.projectDataWarnings || []), ...discoveryWarnings];
+      if (showFaceToggle.checked && previewModels[0].visiblePath !== modelPath) {
+        try {
+          await addFaceModel(previewModels[0]);
+          updateFaceModeStatus("Face shown alongside the model.");
+        } catch (faceError) {
+          updateFaceModeStatus("The face GLB could not be loaded.");
+          console.error("Could not load face GLB", faceError);
+        }
+      }
+      const warnings = discoveryWarnings;
       if (warnings.length) {
         status.textContent = "Some project folders could not be checked for additional 3D models.";
         status.hidden = false;
@@ -426,6 +473,7 @@ transitionFrames.forEach((frameId) => window.cancelAnimationFrame(frameId));
 
 nextModelButton.removeEventListener("click", selectNextModel);
     resizeObserver.disconnect();
+    removeFaceModel();
     controls.dispose();
     studioEnvironment.dispose();
     renderer.dispose();
