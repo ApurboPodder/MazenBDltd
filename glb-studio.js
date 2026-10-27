@@ -11,14 +11,9 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
   const projectTitle = document.getElementById("homeModelProjectTitle");
   const previousModelButton = document.getElementById("homeModelPrevious");
   const nextModelButton = document.getElementById("homeModelNext");
-  const manFaceButton = document.getElementById("addManFace");
-  const womanFaceButton = document.getElementById("addWomanFace");
-  const manFaceFile = document.getElementById("manFaceFile");
-  const womanFaceFile = document.getElementById("womanFaceFile");
-  const removeFaceButton = document.getElementById("removeFace");
+  const showFaceToggle = document.getElementById("showFaceToggle");
   const zoomToggle = document.getElementById("enablePreviewZoom");
   const faceStatus = document.getElementById("studioFaceStatus");
-  let selectedFaceModel = null;
   const contactDialog = document.getElementById("contactDialog");
   const contactTrigger = document.querySelector(".contact-trigger");
   const contactClose = document.querySelector("[data-contact-close]");
@@ -28,6 +23,7 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
   const models = new THREE.Group();
   let previewModels = [];
   let currentModelIndex = 0;
+  let displayedModelPath = "";
   let modelSwitchTimer;
   const transitionFrames = new Set();
   let referenceModelRadius = 0;
@@ -42,50 +38,10 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
   contactTrigger.addEventListener("click", () => contactDialog.showModal());
   contactClose.addEventListener("click", () => contactDialog.close());
 
-  manFaceButton.addEventListener("click", () => manFaceFile.click());
-  womanFaceButton.addEventListener("click", () => womanFaceFile.click());
-  manFaceFile.addEventListener("change", () => loadFaceFile(manFaceFile, "Man"));
-  womanFaceFile.addEventListener("change", () => loadFaceFile(womanFaceFile, "Woman"));
-  removeFaceButton.addEventListener("click", removeSelectedFace);
+  showFaceToggle.addEventListener("change", changeFaceMode);
   zoomToggle.addEventListener("change", () => {
-    if (!controls) return;
-    controls.enableZoom = zoomToggle.checked;
-    faceStatus.textContent = zoomToggle.checked ? "Zoom enabled. Choose a face GLB to add it." : "Zoom disabled. Choose a face GLB to add it.";
+    if (controls) controls.enableZoom = zoomToggle.checked;
   });
-
-  async function loadFaceFile(input, faceLabel) {
-    const file = input.files?.[0];
-    input.value = "";
-    if (!file) return;
-    if (!file.name.toLowerCase().endsWith(".glb")) {
-      faceStatus.textContent = "Choose a .glb face model.";
-      return;
-    }
-    try {
-      faceStatus.textContent = `Loading ${faceLabel.toLowerCase()} face…`;
-      const data = await file.arrayBuffer();
-      const gltf = await new Promise((resolve, reject) => loader.parse(data, "", resolve, reject));
-      if (!gltf.scene) throw new Error("This GLB does not contain a scene.");
-      removeSelectedFace();
-      selectedFaceModel = gltf.scene;
-      selectedFaceModel.name = `${faceLabel} face`;
-      scene.add(selectedFaceModel);
-      removeFaceButton.disabled = false;
-      faceStatus.textContent = `${faceLabel} face added. Choose the other face to replace it.`;
-    } catch (error) {
-      faceStatus.textContent = `Could not load the ${faceLabel.toLowerCase()} face: ${error.message}`;
-      console.error("Could not load face model", error);
-    }
-  }
-
-  function removeSelectedFace() {
-    if (!selectedFaceModel) return;
-    scene.remove(selectedFaceModel);
-    disposeModel(selectedFaceModel);
-    selectedFaceModel = null;
-    removeFaceButton.disabled = true;
-    faceStatus.textContent = "Face removed. Choose a face GLB to add it again.";
-  }
 
   function showError(message, error) {
     status.textContent = message;
@@ -175,7 +131,9 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
   }
 
   function updateProjectCaption(model) {
-    modelLabel.textContent = model.label;
+    const selectedPath = getModelPath(model);
+    const fileName = decodeURIComponent(new URL(selectedPath, window.location.href).pathname.split("/").pop());
+    modelLabel.textContent = model.title.toUpperCase() + " / " + fileName.toUpperCase();
     projectTitle.textContent = model.title;
     projectLink.href = model.projectId
       ? `project.html?project=${encodeURIComponent(model.projectId)}`
@@ -264,9 +222,10 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
   async function switchModel(direction) {
     if (isSwitchingModels || previewModels.length < 2) return;
     isSwitchingModels = true;
+    showFaceToggle.disabled = true;
     try {
       const nextIndex = (currentModelIndex + direction + previewModels.length) % previewModels.length;
-      const modelContent = await loadModel(previewModels[nextIndex].path);
+      const modelContent = await loadModel(getModelPath(previewModels[nextIndex]));
       const previousModel = models.children[0];
       const nextModel = new THREE.Group();
       nextModel.add(modelContent);
@@ -276,6 +235,7 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
         models.add(nextModel);
       }
       currentModelIndex = nextIndex;
+      displayedModelPath = getModelPath(previewModels[currentModelIndex]);
       updateProjectCaption(previewModels[currentModelIndex]);
       status.textContent = "Preview ready.";
       status.hidden = true;
@@ -283,6 +243,7 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
       showError("The selected 3D preview model could not be loaded.", error);
     } finally {
       isSwitchingModels = false;
+      showFaceToggle.disabled = false;
       scheduleNextModel();
     }
   }
@@ -300,6 +261,54 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
   previousModelButton.addEventListener("click", selectPreviousModel);
   nextModelButton.addEventListener("click", selectNextModel);
 
+  function getModelPath(model) {
+    if (!model) return "";
+    if (showFaceToggle.checked) return model.visiblePath || model.hiddenPath || "";
+    return model.hiddenPath || model.visiblePath || "";
+  }
+
+  function updateFaceModeStatus() {
+    faceStatus.textContent = showFaceToggle.checked
+      ? "Face shown: GLB2 is used when available; GLB1 variants are hidden."
+      : "Face hidden: GLB1 is used when available; GLB2 variants are hidden.";
+  }
+
+  async function changeFaceMode() {
+    pauseModelTimer();
+    updateFaceModeStatus();
+    if (!previewModels.length || isSwitchingModels) return;
+    const selected = previewModels[currentModelIndex];
+    const nextPath = getModelPath(selected);
+    if (!nextPath || nextPath === displayedModelPath) {
+      scheduleNextModel();
+      return;
+    }
+    isSwitchingModels = true;
+    showFaceToggle.disabled = true;
+    try {
+      const modelContent = await loadModel(nextPath);
+      const nextModel = new THREE.Group();
+      nextModel.add(modelContent);
+      const previousModel = models.children[0];
+      if (previousModel) {
+        models.remove(previousModel);
+        disposeModel(previousModel);
+      }
+      fitModel(nextModel);
+      models.add(nextModel);
+      displayedModelPath = nextPath;
+      updateProjectCaption(selected);
+      status.textContent = "Preview ready.";
+      status.hidden = true;
+    } catch (error) {
+      showError("The selected face variant could not be loaded.", error);
+    } finally {
+      isSwitchingModels = false;
+      showFaceToggle.disabled = false;
+      scheduleNextModel();
+    }
+  }
+
   async function loadModels() {
     try {
       const projects = await window.loadProjects();
@@ -313,65 +322,63 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
             .toLowerCase(),
         }))
         .sort((first, second) => second.folderPath.length - first.folderPath.length);
-      const modelsByPath = new Map();
-      const excludedModelPaths = new Set();
-      projects.forEach((project) => {
-        [project.faceModel, project.faceVariants?.faceVisible].forEach((path) => {
-          if (typeof path === "string") {
-            excludedModelPaths.add(new URL(path, window.location.href).href);
-          }
-        });
-      });
-      const addModel = (path, project, fileName = "") => {
+      const modelsByProject = new Map();
+
+      function registerModel(path, project, role = "auto") {
         if (typeof path !== "string" || !/\.glb(?:$|[?#])/i.test(path)) return;
         const modelUrl = new URL(path, window.location.href);
-        if (excludedModelPaths.has(modelUrl.href)) return;
-        const decodedFileName = fileName ||
-          decodeURIComponent(modelUrl.pathname.split("/").pop());
-        if (/^project 6 glb 1\.glb$/i.test(decodedFileName)) return;
-        if (modelsByPath.has(modelUrl.href)) return;
-        const title = project?.title || decodedFileName.replace(/\.glb$/i, "");
-        modelsByPath.set(modelUrl.href, {
-          path: modelUrl.href,
-          label: `${title.toUpperCase()} / 3D MODEL`,
-          title,
-          projectId: project?.id,
-        });
-      };
+        const fileName = decodeURIComponent(modelUrl.pathname.split("/").pop());
+        const directory = modelUrl.pathname.slice(0, modelUrl.pathname.lastIndexOf("/"));
+        const key = project && project.id ? "project:" + project.id : "folder:" + directory.toLowerCase();
+        let entry = modelsByProject.get(key);
+        if (!entry) {
+          const folderName = decodeURIComponent(directory.split("/").pop() || fileName.replace(/\.glb$/i, ""));
+          entry = { title: project && project.title ? project.title : folderName, projectId: project && project.id, hiddenPath: "", visiblePath: "" };
+          modelsByProject.set(key, entry);
+        }
+        const lowerName = fileName.toLowerCase();
+        if (lowerName === "glb1.glb") entry.hiddenPath = modelUrl.href;
+        else if (lowerName === "glb2.glb") entry.visiblePath = modelUrl.href;
+        else if (role === "visible" || role === "faceVisible" || role === "faceModel") entry.visiblePath = modelUrl.href;
+        else if (role === "hidden" || role === "faceHidden" || role === "model") entry.hiddenPath = modelUrl.href;
+        else if (!entry.hiddenPath) entry.hiddenPath = modelUrl.href;
+        else if (!entry.visiblePath) entry.visiblePath = modelUrl.href;
+      }
 
       projects.forEach((project) => {
-        addModel(project.model, project);
-        addModel(project.faceVariants?.faceHidden, project);
+        registerModel(project.faceVariants && project.faceVariants.faceHidden, project, "hidden");
+        registerModel(project.model, project, "model");
+        registerModel(project.faceVariants && project.faceVariants.faceVisible, project, "visible");
+        registerModel(project.faceModel, project, "faceModel");
       });
 
       try {
         const discovery = await window.discoverGlbModels();
-        discoveryWarnings = discovery.warnings;
+        discoveryWarnings = discovery.warnings || [];
         discovery.models.forEach((path) => {
-          const modelPath = decodeURIComponent(new URL(path, window.location.href).pathname)
-            .toLowerCase();
-          const matchingProject = projectsByFolder.find(({ folderPath }) =>
-            modelPath.startsWith(`${folderPath}/`)
-          )?.project;
-          addModel(path, matchingProject);
+          const modelPath = decodeURIComponent(new URL(path, window.location.href).pathname).toLowerCase();
+          const matchingProject = projectsByFolder.find(({ folderPath }) => modelPath.startsWith(folderPath + "/"))?.project;
+          registerModel(path, matchingProject);
         });
       } catch (error) {
         console.warn("Could not scan project folders for additional GLB models", error);
         discoveryWarnings = [error.message];
       }
 
-      previewModels = [...modelsByPath.values()];
+      previewModels = [...modelsByProject.values()].filter((model) => model.hiddenPath || model.visiblePath);
+      previewModels.sort((first, second) => first.title.localeCompare(second.title, undefined, { numeric: true, sensitivity: "base" }));
       previousModelButton.disabled = previewModels.length < 2;
       nextModelButton.disabled = previewModels.length < 2;
-      if (!previewModels.length) {
-        throw new Error("No eyewear GLB models were found in the project data or project folders.");
-      }
-      const modelContent = await loadModel(previewModels[0].path);
+      if (!previewModels.length) throw new Error("No eyewear GLB models were found in the project data or project folders.");
+      const modelPath = getModelPath(previewModels[0]);
+      const modelContent = await loadModel(modelPath);
       const model = new THREE.Group();
       model.add(modelContent);
       fitModel(model);
       models.add(model);
+      displayedModelPath = modelPath;
       updateProjectCaption(previewModels[0]);
+      updateFaceModeStatus();
       const warnings = [...(window.projectDataWarnings || []), ...discoveryWarnings];
       if (warnings.length) {
         status.textContent = "Some project folders could not be checked for additional 3D models.";
@@ -386,7 +393,6 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
       showError("The 3D preview could not be loaded.", error);
     }
   }
-
   function resize() {
     const bounds = canvas.getBoundingClientRect();
     if (!bounds.width || !bounds.height) return;
@@ -409,11 +415,7 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
 
   window.addEventListener("pagehide", () => {
     window.cancelAnimationFrame(animationFrame);
-    if (selectedFaceModel) {
-      scene.remove(selectedFaceModel);
-      disposeModel(selectedFaceModel);
-    }
-    transitionFrames.forEach((frameId) => window.cancelAnimationFrame(frameId));
+transitionFrames.forEach((frameId) => window.cancelAnimationFrame(frameId));
     transitionFrames.clear();
     window.clearTimeout(modelSwitchTimer);
     canvas.removeEventListener("pointerdown", pauseModelTimer);
@@ -421,9 +423,8 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
     canvas.removeEventListener("pointercancel", scheduleNextModel);
     canvas.removeEventListener("click", scheduleNextModel);
     previousModelButton.removeEventListener("click", selectPreviousModel);
-    manFaceButton.removeEventListener("click", () => manFaceFile.click());
-    womanFaceButton.removeEventListener("click", () => womanFaceFile.click());
-    nextModelButton.removeEventListener("click", selectNextModel);
+
+nextModelButton.removeEventListener("click", selectNextModel);
     resizeObserver.disconnect();
     controls.dispose();
     studioEnvironment.dispose();

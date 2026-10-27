@@ -54,13 +54,9 @@
           <div class="model-orbit-label"><span id="homeModelLabel">MODERN DESIGN / 05</span></div>
           <canvas id="homeModel" aria-label="Interactive GLB preview; drag to rotate"></canvas>
           <div class="glb-studio-controls" aria-label="Preview options">
-            <button class="studio-face-button" id="addManFace" type="button">Add man face</button>
-            <input id="manFaceFile" type="file" accept=".glb,model/gltf-binary" hidden>
-            <button class="studio-face-button" id="addWomanFace" type="button">Add woman face</button>
-            <input id="womanFaceFile" type="file" accept=".glb,model/gltf-binary" hidden>
-            <button class="studio-face-button" id="removeFace" type="button" disabled>Remove face</button>
+            <label class="studio-face-toggle"><input id="showFaceToggle" type="checkbox"> <span>Show face</span></label>
             <label class="studio-zoom-toggle"><input id="enablePreviewZoom" type="checkbox" checked> <span>Enable zoom</span></label>
-            <p class="studio-face-status" id="studioFaceStatus" role="status" aria-live="polite">Choose a face GLB to add it to the preview.</p>
+            <p class="studio-face-status" id="studioFaceStatus" role="status" aria-live="polite">Face hidden. GLB1 is shown when a pair is available.</p>
           </div>
           <button class="model-navigation model-navigation-previous" id="homeModelPrevious" type="button" aria-label="Show previous eyewear model" aria-controls="homeModel">‹</button>
           <button class="model-navigation model-navigation-next" id="homeModelNext" type="button" aria-label="Show next eyewear model" aria-controls="homeModel">›</button>
