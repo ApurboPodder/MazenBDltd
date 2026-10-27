@@ -41,6 +41,7 @@ export async function initProjectModelViewer(canvas, status, modelPath) {
 
   try {
     const modelUrl = new URL(modelPath, window.location.href);
+    modelUrl.searchParams.set("_glbRefresh", String(Date.now()));
     const gltf = await new GLTFLoader().loadAsync(modelUrl.href);
     const model = gltf.scene;
     enhanceMetalReflections(model);

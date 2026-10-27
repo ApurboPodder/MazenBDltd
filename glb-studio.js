@@ -79,7 +79,7 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
   camera.position.set(0.65, 0.15, 1.3);
 
   async function loadModel(path) {
-    const response = await fetch(path);
+    const response = await fetch(path, { cache: "no-store" });
     if (!response.ok) throw new Error(`Model request failed (${response.status}).`);
     const data = await response.arrayBuffer();
     const gltf = await new Promise((resolve, reject) => {

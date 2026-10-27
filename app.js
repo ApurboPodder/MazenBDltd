@@ -318,7 +318,7 @@ import { enhanceMetalReflections, setupStudioEnvironment } from "./three-studio.
       }
 
       modelStatus.textContent = "Loading project model…";
-      const response = await fetch(modelUrl);
+      const response = await fetch(modelUrl, { cache: "no-store" });
       if (!response.ok) throw new Error(`Model request failed (${response.status}).`);
       const blob = await response.blob();
       if (blob.size > 70 * 1024 * 1024) throw new Error("This GLB is larger than the 70 MB file limit.");
