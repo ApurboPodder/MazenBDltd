@@ -93,15 +93,15 @@
     ],
     "sourceFolder": "assets/gallery-covers/Project 6",
     "faceVariants": {
-      "faceVisible": "assets/gallery-covers/Project%206/GLB2.glb",
-      "faceHidden": "assets/gallery-covers/Project%206/GLB1.glb"
+      "faceHidden": "assets/gallery-covers/Project%206/GLB2.glb",
+      "faceVisible": "assets/gallery-covers/Project%206/GLB1.glb"
     },
     "categories": [
       "Acetate",
       "Prescription Glasses"
     ],
-    "model": "assets/gallery-covers/Project%206/GLB1.glb",
-    "faceModel": "assets/gallery-covers/Project%206/GLB2.glb"
+    "model": "assets/gallery-covers/Project%206/GLB2.glb",
+    "faceModel": "assets/gallery-covers/Project%206/GLB1.glb"
   },
   {
     "id": "110317",

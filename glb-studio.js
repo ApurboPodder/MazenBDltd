@@ -412,10 +412,10 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
           modelsByProject.set(key, entry);
         }
         const lowerName = fileName.toLowerCase();
-        if (lowerName === "glb1.glb") entry.hiddenPath = modelUrl.href;
-        else if (lowerName === "glb2.glb") entry.visiblePath = modelUrl.href;
-        else if (role === "visible" || role === "faceVisible" || role === "faceModel") entry.visiblePath = modelUrl.href;
+        if (role === "visible" || role === "faceVisible" || role === "faceModel") entry.visiblePath = modelUrl.href;
         else if (role === "hidden" || role === "faceHidden" || role === "model") entry.hiddenPath = modelUrl.href;
+        else if (lowerName === "glb1.glb" && !entry.hiddenPath) entry.hiddenPath = modelUrl.href;
+        else if (lowerName === "glb2.glb" && !entry.visiblePath) entry.visiblePath = modelUrl.href;
         else if (!entry.hiddenPath) entry.hiddenPath = modelUrl.href;
         else if (!entry.visiblePath) entry.visiblePath = modelUrl.href;
       }
