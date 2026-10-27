@@ -1,8 +1,9 @@
 const CACHE_PREFIX = "mazen-eyewear-pwa-";
-const CACHE_NAME = CACHE_PREFIX + "v9";
+const CACHE_NAME = CACHE_PREFIX + "v10";
 const APP_FILES = [
   "./",
   "./index.html",
+  "./glb-studio.html",
   "./gallery.html",
   "./project.html",
   "./configurator.html",
@@ -13,6 +14,7 @@ const APP_FILES = [
   "./manifest.webmanifest",
   "./style.css",
   "./home.css",
+  "./glb-studio.css",
   "./gallery.css",
   "./project.css",
   "./configurator.css",
@@ -23,6 +25,7 @@ const APP_FILES = [
   "./theme.css",
   "./theme.js",
   "./home.js",
+  "./glb-studio.js",
   "./gallery.js",
   "./project.js",
   "./project-viewer.js",

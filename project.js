@@ -195,7 +195,7 @@
     configuratorLink.hidden = true;
     tryOnLink.hidden = true;
     modelPreview.hidden = true;
-    const previewModel = project.faceVariants?.faceHidden || project.model;
+    const previewModel = project.faceVariants?.faceVisible || project.model;
     if (typeof previewModel === "string" && previewModel) {
       modelPreview.hidden = false;
       import("./project-viewer.js")
