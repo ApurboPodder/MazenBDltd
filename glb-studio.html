@@ -13,28 +13,15 @@
   <link rel="apple-touch-icon" href="icons/eyewear-icon-192.png">
   <meta name="theme-color" content="#f3f0ea">
 </head>
-<body class="home-page">
+<body class="home-page glb-studio-page">
   <div class="home-shell">
     <header class="home-header">
       <a class="home-brand" href="index.html">
         <img class="site-logo home-site-logo" src="assets/Logo/Mazen%20Logo.png" alt="Mazen(BD) Industries LTD">
         <span class="home-brand-name">MAZEN (BD) INDUSTRIES LTD</span>
       </a>
-      <nav class="home-nav site-top-nav" aria-label="Main navigation">
-        <a href="gallery.html">Projects</a>
-        <a href="try-on.html">AR Viewer</a>
-        <a href="glb-studio.html" aria-current="page">GLB Studio</a>
-        <button class="contact-trigger" type="button" aria-haspopup="dialog" aria-controls="contactDialog">Contact</button>
+      <nav class="home-nav site-top-nav" aria-label="Display settings">
         <button class="theme-switch" type="button" data-theme-toggle aria-label="Toggle color theme">Dark mode</button>
-      
-      <details class="site-tools-menu">
-        <summary class="site-tools-button" aria-label="Open tools menu"><span></span><span></span><span></span></summary>
-        <div class="site-tools-dropdown" aria-label="Tools">
-          <a href="configurator.html">Configurator <span aria-hidden="true">↗</span></a>
-          <a href="multi-configurator.html">Multi-model</a>
-          <a href="image-converter.html">Image tools</a>
-        </div>
-      </details>
       </nav>
     </header>
 
@@ -42,29 +29,23 @@
       <section class="home-hero" aria-labelledby="homeTitle">
         <div class="hero-wash" aria-hidden="true"></div>
 
-        <div class="hero-copy">
-          <h1 id="homeTitle">A clearer point<br>of <em>view.</em></h1>
-          <p class="hero-description">Thoughtful frames, considered from every angle. Explore a collection shaped by form, material, and the people who wear it.</p>
-          <div class="hero-actions">
-            <a class="hero-button hero-button-dark" href="gallery.html">Explore the collection <span aria-hidden="true">↗</span></a>
-          </div>
-        </div>
-
         <div class="hero-model-wrap">
           <div class="model-orbit-label"><span id="homeModelLabel">MODERN DESIGN / 05</span></div>
           <canvas id="homeModel" aria-label="Interactive GLB preview; drag to rotate"></canvas>
-          <div class="glb-studio-controls" aria-label="Preview options">
-            <label class="studio-face-toggle"><input id="showFaceToggle" type="checkbox"> <span>Show face</span></label>
-            <label class="studio-zoom-toggle"><input id="enablePreviewZoom" type="checkbox" checked> <span>Enable zoom</span></label>
-            <p class="studio-face-status" id="studioFaceStatus" role="status" aria-live="polite">Face hidden. GLB1 is shown when a pair is available.</p>
-          </div>
-          <button class="model-navigation model-navigation-previous" id="homeModelPrevious" type="button" aria-label="Show previous eyewear model" aria-controls="homeModel">‹</button>
-          <button class="model-navigation model-navigation-next" id="homeModelNext" type="button" aria-label="Show next eyewear model" aria-controls="homeModel">›</button>
           <div class="model-loading" id="homeModelStatus" role="status" aria-live="polite">Preparing the 3D preview…</div>
           <a class="model-caption" id="homeModelProject" href="project.html?project=5">
             <span id="homeModelProjectTitle">Modern Design</span>
             <span>Open current GLB project <b aria-hidden="true">↗</b></span>
           </a>
+        </div>
+        <div class="glb-studio-toolbar" aria-label="Preview controls">
+          <button class="model-navigation model-navigation-previous" id="homeModelPrevious" type="button" aria-label="Show previous eyewear model" aria-controls="homeModel">‹</button>
+          <div class="glb-studio-controls" aria-label="Preview options">
+            <label class="studio-face-toggle"><input id="showFaceToggle" type="checkbox"> <span>Show face</span></label>
+            <label class="studio-rotate-toggle"><input id="enableAutoRotation" type="checkbox"> <span>Auto rotate</span></label>
+            <p class="studio-face-status" id="studioFaceStatus" role="status" aria-live="polite">Face hidden.</p>
+          </div>
+          <button class="model-navigation model-navigation-next" id="homeModelNext" type="button" aria-label="Show next eyewear model" aria-controls="homeModel">›</button>
         </div>
         <div class="hero-bottom-note"><span>MAZEN(BD) INDUSTRIES LTD</span><span>Eyewear, made personal.</span></div>
       </section>

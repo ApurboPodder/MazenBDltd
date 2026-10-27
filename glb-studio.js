@@ -12,7 +12,7 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
   const previousModelButton = document.getElementById("homeModelPrevious");
   const nextModelButton = document.getElementById("homeModelNext");
   const showFaceToggle = document.getElementById("showFaceToggle");
-  const zoomToggle = document.getElementById("enablePreviewZoom");
+  const autoRotateToggle = document.getElementById("enableAutoRotation");
   const faceStatus = document.getElementById("studioFaceStatus");
   const contactDialog = document.getElementById("contactDialog");
   const contactTrigger = document.querySelector(".contact-trigger");
@@ -24,6 +24,7 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
   let previewModels = [];
   let currentModelIndex = 0;
   let displayedModelPath = "";
+  let activeFaceModel = null;
   let modelSwitchTimer;
   const transitionFrames = new Set();
   let referenceModelRadius = 0;
@@ -35,12 +36,12 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
   let resizeObserver;
   let animationFrame;
 
-  contactTrigger.addEventListener("click", () => contactDialog.showModal());
+  contactTrigger?.addEventListener("click", () => contactDialog.showModal());
   contactClose.addEventListener("click", () => contactDialog.close());
 
   showFaceToggle.addEventListener("change", changeFaceMode);
-  zoomToggle.addEventListener("change", () => {
-    if (controls) controls.enableZoom = zoomToggle.checked;
+  autoRotateToggle.addEventListener("change", () => {
+    if (controls) controls.autoRotate = autoRotateToggle.checked;
   });
 
   function showError(message, error) {
@@ -70,9 +71,9 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
 
   controls.enableDamping = true;
   controls.dampingFactor = 0.06;
-  controls.enablePan = false;
-  controls.enableZoom = zoomToggle.checked;
-  controls.autoRotate = true;
+  controls.enablePan = true;
+  controls.enableZoom = true;
+  controls.autoRotate = autoRotateToggle.checked;
   controls.autoRotateSpeed = 1;
   controls.target.set(0, 0, 0);
   camera.position.set(0.65, 0.15, 1.3);
@@ -104,14 +105,11 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
     });
   }
 
-  function fitModel(model) {
-    const bounds = new THREE.Box3().setFromObject(model);
+  function fitCameraToBounds(bounds) {
     if (bounds.isEmpty()) throw new Error("The preview model contains no visible geometry.");
     const sphere = bounds.getBoundingSphere(new THREE.Sphere());
     const direction = camera.position.clone().sub(controls.target).normalize();
     const distance = (sphere.radius * 0.95) / Math.sin(THREE.MathUtils.degToRad(camera.fov / 2));
-    referenceModelRadius = sphere.radius;
-    referenceModelCenter.copy(sphere.center);
     controls.target.copy(sphere.center);
     camera.position.copy(sphere.center).add(direction.multiplyScalar(distance));
     camera.near = Math.max(sphere.radius / 1000, 0.001);
@@ -121,13 +119,18 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
     controls.saveState();
   }
 
-  function fitModelToReference(model) {
+  function fitModel(model) {
     const bounds = new THREE.Box3().setFromObject(model);
     if (bounds.isEmpty()) throw new Error("The preview model contains no visible geometry.");
     const sphere = bounds.getBoundingSphere(new THREE.Sphere());
-    const scale = referenceModelRadius / sphere.radius;
-    model.scale.setScalar(scale);
-    model.position.copy(referenceModelCenter).addScaledVector(sphere.center, -scale);
+    referenceModelRadius = sphere.radius;
+    referenceModelCenter.copy(sphere.center);
+    fitCameraToBounds(bounds);
+  }
+
+  function fitModelToReference(model) {
+    // Keep the GLB at its authored coordinates, as the configurator does.
+    model.updateMatrixWorld(true);
   }
 
   function updateProjectCaption(model) {
@@ -206,8 +209,6 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
 
   function scheduleNextModel() {
     window.clearTimeout(modelSwitchTimer);
-    if (previewModels.length < 2) return;
-    modelSwitchTimer = window.setTimeout(() => switchModel(1), 15000);
   }
 
   function pauseModelTimer() {
@@ -237,18 +238,20 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
         fitModel(nextModel);
         models.add(nextModel);
       }
-      removeFaceModel();
       currentModelIndex = nextIndex;
       displayedModelPath = nextPath;
       updateProjectCaption(previewModels[currentModelIndex]);
-      if (showFaceToggle.checked && previewModels[currentModelIndex].visiblePath !== nextPath) {
+      removeFaceOverlay();
+      if (showFaceToggle.checked && previewModels[currentModelIndex].visiblePath === nextPath) {
         try {
-          await addFaceModel(previewModels[currentModelIndex]);
-          updateFaceModeStatus("Face shown alongside the model.");
+          await addFaceOverlay();
+          updateFaceModeStatus("GLB2 and face model shown.");
         } catch (faceError) {
-          updateFaceModeStatus("The face GLB could not be loaded.");
-          console.error("Could not load face GLB", faceError);
+          updateFaceModeStatus("The face model could not be loaded from assets/face/face 1.glb.");
+          console.error("Could not load shared face model", faceError);
         }
+      } else {
+        updateFaceModeStatus();
       }
       status.textContent = "Preview ready.";
       status.hidden = true;
@@ -257,6 +260,7 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
     } finally {
       isSwitchingModels = false;
       showFaceToggle.disabled = false;
+      status.hidden = true;
       scheduleNextModel();
     }
   }
@@ -275,68 +279,102 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
   nextModelButton.addEventListener("click", selectNextModel);
 
   function getModelPath(model) {
-    return model ? model.hiddenPath || model.visiblePath || "" : "";
+    if (!model) return "";
+    return showFaceToggle.checked
+      ? model.visiblePath || model.hiddenPath || ""
+      : model.hiddenPath || model.visiblePath || "";
   }
 
-  function removeFaceModel() {
+  function removeFaceOverlay() {
     if (!activeFaceModel) return;
     scene.remove(activeFaceModel);
     disposeModel(activeFaceModel);
     activeFaceModel = null;
+    const mainModel = models.children[0];
+    if (mainModel) fitCameraToBounds(new THREE.Box3().setFromObject(mainModel));
   }
 
-  async function addFaceModel(model) {
-    const facePath = model && model.visiblePath;
-    const mainPath = getModelPath(model);
-    if (!facePath || facePath === mainPath) return false;
-    const faceContent = await loadModel(facePath);
+  async function addFaceOverlay() {
+    if (activeFaceModel) return true;
+    const faceContent = await loadModel("assets/face/face%201.glb");
     const faceGroup = new THREE.Group();
     faceGroup.add(faceContent);
-    fitModelToReference(faceGroup);
+    // Match configurator.html: overlay GLBs share their authored origin.
+    faceGroup.position.set(0, 0, 0);
+    faceGroup.updateMatrixWorld(true);
     scene.add(faceGroup);
     activeFaceModel = faceGroup;
+    const bounds = new THREE.Box3().setFromObject(models.children[0]);
+    bounds.union(new THREE.Box3().setFromObject(faceGroup));
+    fitCameraToBounds(bounds);
     return true;
   }
 
   function updateFaceModeStatus(message) {
     if (message) {
       faceStatus.textContent = message;
-    } else {
-      faceStatus.textContent = showFaceToggle.checked
-        ? "Face shown alongside the model when a GLB2 face file is available."
-        : "Face hidden.";
+      return;
     }
+    const selected = previewModels[currentModelIndex];
+    faceStatus.textContent = showFaceToggle.checked
+      ? selected && selected.visiblePath && displayedModelPath === selected.visiblePath
+        ? "GLB2 and face model shown."
+        : "This project has no GLB2 model available."
+      : "Face hidden. GLB1 model shown.";
   }
 
   async function changeFaceMode() {
     pauseModelTimer();
-    updateFaceModeStatus();
     if (!previewModels.length || isSwitchingModels) return;
     const selected = previewModels[currentModelIndex];
+    const nextPath = getModelPath(selected);
+    if (showFaceToggle.checked && (!selected.visiblePath || selected.visiblePath === selected.hiddenPath)) {
+      updateFaceModeStatus("This project has no GLB2 model available.");
+      scheduleNextModel();
+      return;
+    }
     isSwitchingModels = true;
     showFaceToggle.disabled = true;
     try {
+      if (nextPath && nextPath !== displayedModelPath) {
+        status.hidden = false;
+        status.textContent = showFaceToggle.checked
+          ? "Loading GLB2 and face model for " + selected.title + "…"
+          : "Loading GLB1 model for " + selected.title + "…";
+        const modelContent = await loadModel(nextPath);
+        const nextModel = new THREE.Group();
+        nextModel.add(modelContent);
+        const previousModel = models.children[0];
+        if (previousModel) fitModelToReference(nextModel);
+        else fitModel(nextModel);
+        models.add(nextModel);
+        if (previousModel) {
+          models.remove(previousModel);
+          disposeModel(previousModel);
+        }
+        displayedModelPath = nextPath;
+        updateProjectCaption(selected);
+      }
       if (showFaceToggle.checked) {
-        if (!selected.visiblePath || selected.visiblePath === getModelPath(selected)) {
-          updateFaceModeStatus("No separate GLB2 face file is available for this project.");
-        } else {
-          status.hidden = false;
-          status.textContent = "Loading face alongside " + selected.title + "…";
-          removeFaceModel();
-          const added = await addFaceModel(selected);
-          updateFaceModeStatus(added ? "Face shown alongside the model." : "No separate GLB2 face file is available for this project.");
-          status.hidden = true;
+        try {
+          await addFaceOverlay();
+          updateFaceModeStatus("GLB2 and face model shown.");
+        } catch (faceError) {
+          updateFaceModeStatus("The face model could not be loaded from assets/face/face 1.glb.");
+          console.error("Could not load shared face model", faceError);
         }
       } else {
-        removeFaceModel();
-        updateFaceModeStatus("Face hidden.");
+        removeFaceOverlay();
+        updateFaceModeStatus("Face hidden. GLB1 model shown.");
       }
     } catch (error) {
-      updateFaceModeStatus("The face GLB could not be loaded.");
-      console.error("Could not load face GLB", error);
+      showFaceToggle.checked = displayedModelPath === selected.visiblePath && selected.visiblePath !== selected.hiddenPath;
+      updateFaceModeStatus("Could not load the selected GLB model.");
+      console.error("Could not switch GLB model", error);
     } finally {
       isSwitchingModels = false;
       showFaceToggle.disabled = false;
+      status.hidden = true;
       scheduleNextModel();
     }
   }
@@ -417,15 +455,6 @@ import { boostModelColor, enhanceMetalReflections, setupStudioEnvironment } from
       displayedModelPath = modelPath;
       updateProjectCaption(previewModels[0]);
       updateFaceModeStatus();
-      if (showFaceToggle.checked && previewModels[0].visiblePath !== modelPath) {
-        try {
-          await addFaceModel(previewModels[0]);
-          updateFaceModeStatus("Face shown alongside the model.");
-        } catch (faceError) {
-          updateFaceModeStatus("The face GLB could not be loaded.");
-          console.error("Could not load face GLB", faceError);
-        }
-      }
       const warnings = discoveryWarnings;
       if (warnings.length) {
         status.textContent = "Some project folders could not be checked for additional 3D models.";
@@ -473,7 +502,11 @@ transitionFrames.forEach((frameId) => window.cancelAnimationFrame(frameId));
 
 nextModelButton.removeEventListener("click", selectNextModel);
     resizeObserver.disconnect();
-    removeFaceModel();
+    if (activeFaceModel) {
+      scene.remove(activeFaceModel);
+      disposeModel(activeFaceModel);
+      activeFaceModel = null;
+    }
     controls.dispose();
     studioEnvironment.dispose();
     renderer.dispose();

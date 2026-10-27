@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "mazen-eyewear-pwa-";
-const CACHE_NAME = CACHE_PREFIX + "v13";
+const CACHE_NAME = CACHE_PREFIX + "v31";
 const APP_FILES = [
   "./",
   "./index.html",
@@ -36,6 +36,7 @@ const APP_FILES = [
   "./try-on.js",
   "./admin.js",
   "./assets/Logo/Mazen%20Logo.png",
+  "./assets/face/face%201.glb",
   "./icons/eyewear-icon-192.png",
   "./icons/eyewear-icon-512.png"
 ];
