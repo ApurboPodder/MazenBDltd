@@ -1,0 +1,201 @@
+[
+  {
+    "id": "1",
+    "title": "Classic Acetate",
+    "description": "A rounded silhouette with a confident acetate profile, made for everyday wear.",
+    "cover": "assets/gallery-covers/1.webp",
+    "photos": [
+      "assets/gallery-covers/1.webp"
+    ],
+    "categories": [
+      "Acetate"
+    ]
+  },
+  {
+    "id": "2",
+    "title": "Fashion Acetate",
+    "description": "A distinctive violet-patterned acetate frame, shown from every angle.",
+    "cover": "assets/gallery-covers/project%202/1.webp",
+    "photos": [
+      "assets/gallery-covers/project%202/1.webp",
+      "assets/gallery-covers/project%202/2.webp",
+      "assets/gallery-covers/project%202/3.webp",
+      "assets/gallery-covers/project%202/4.webp"
+    ],
+    "sourceFolder": "assets/gallery-covers/project 2",
+    "categories": [
+      "Acetate"
+    ]
+  },
+  {
+    "id": "3",
+    "title": "Rounded Metal Design",
+    "description": "A new eyewear design concept, shown from multiple views.",
+    "cover": "assets/gallery-covers/project%203/1-1.webp",
+    "photos": [
+      "assets/gallery-covers/project%203/1-1.webp",
+      "assets/gallery-covers/project%203/1-2.webp",
+      "assets/gallery-covers/project%203/1-3.webp",
+      "assets/gallery-covers/project%203/1-4.webp",
+      "assets/gallery-covers/project%203/1-5.webp"
+    ],
+    "sourceFolder": "assets/gallery-covers/project 3",
+    "categories": [
+      "Metal"
+    ]
+  },
+  {
+    "id": "4",
+    "title": "Project 4",
+    "description": "A new eyewear design concept, presented in four product views.",
+    "cover": "assets/gallery-covers/project%204/1.webp",
+    "photos": [
+      "assets/gallery-covers/project%204/1.webp",
+      "assets/gallery-covers/project%204/2.webp",
+      "assets/gallery-covers/project%204/3.webp",
+      "assets/gallery-covers/project%204/4.webp"
+    ],
+    "sourceFolder": "assets/gallery-covers/project 4",
+    "categories": [
+      "Eyewear design"
+    ]
+  },
+  {
+    "id": "5",
+    "title": "Modern Design",
+    "description": "A contemporary eyewear study, presented in five product views.",
+    "cover": "assets/gallery-covers/project%205/shape%201%201.webp",
+    "photos": [
+      "assets/gallery-covers/project%205/shape%201%201.webp",
+      "assets/gallery-covers/project%205/shape%201%202.webp",
+      "assets/gallery-covers/project%205/shape%201%203.webp",
+      "assets/gallery-covers/project%205/shape%201%205.webp",
+      "assets/gallery-covers/project%205/shape%201%206.webp"
+    ],
+    "model": "assets/gallery-covers/project%205/GLB1.glb",
+    "sourceFolder": "assets/gallery-covers/project 5",
+    "categories": [
+      "Metal",
+      "Prescription Glasses"
+    ]
+  },
+  {
+    "id": "6",
+    "title": "Project 6",
+    "description": "Explore five product views and switch between the two eyewear models by showing or hiding the face.",
+    "cover": "assets/gallery-covers/Project%206/1.webp",
+    "photos": [
+      "assets/gallery-covers/Project%206/1.webp",
+      "assets/gallery-covers/Project%206/2.webp",
+      "assets/gallery-covers/Project%206/3.webp",
+      "assets/gallery-covers/Project%206/4.webp",
+      "assets/gallery-covers/Project%206/5.webp"
+    ],
+    "sourceFolder": "assets/gallery-covers/Project 6",
+    "faceVariants": {
+      "faceVisible": "assets/gallery-covers/Project%206/GLB2.glb",
+      "faceHidden": "assets/gallery-covers/Project%206/GLB1.glb"
+    },
+    "categories": [
+      "Acetate",
+      "Prescription Glasses"
+    ],
+    "model": "assets/gallery-covers/Project%206/GLB1.glb",
+    "faceModel": "assets/gallery-covers/Project%206/GLB2.glb"
+  },
+  {
+    "id": "110317",
+    "title": "110317",
+    "description": "A new eyewear design concept, shown from multiple product views.",
+    "cover": "assets/gallery-covers/110317/1.webp",
+    "photos": [
+      "assets/gallery-covers/110317/1.webp",
+      "assets/gallery-covers/110317/2.webp",
+      "assets/gallery-covers/110317/3.webp",
+      "assets/gallery-covers/110317/4.webp"
+    ],
+    "sourceFolder": "assets/gallery-covers/110317",
+    "model": "assets/gallery-covers/110317/GLB1.glb",
+    "faceModel": "assets/gallery-covers/110317/GLB2.glb",
+    "categories": [
+      "Metal",
+      "Prescription Glasses"
+    ]
+  },
+  {
+    "id": "new-uploaded-project",
+    "title": "new-uploaded-project",
+    "description": "A new eyewear design concept, shown from multiple product views.",
+    "cover": "assets/gallery-covers/new-uploaded-project/111884-1.webp",
+    "photos": [
+      "assets/gallery-covers/new-uploaded-project/111884-1.webp",
+      "assets/gallery-covers/new-uploaded-project/111884-2.webp",
+      "assets/gallery-covers/new-uploaded-project/111884-3.webp",
+      "assets/gallery-covers/new-uploaded-project/111884-4.webp"
+    ],
+    "sourceFolder": "assets/gallery-covers/new-uploaded-project",
+    "model": "assets/gallery-covers/new-uploaded-project/GLB1.glb",
+    "categories": [
+      "Acetate",
+      "Prescription Glasses"
+    ]
+  },
+  {
+    "id": "project-7",
+    "title": "project 7",
+    "categories": [
+      "Metal",
+      "Prescription Glasses"
+    ],
+    "description": "A new eyewear design concept, shown from multiple product views.",
+    "cover": "assets/gallery-covers/project 7/1.webp",
+    "photos": [
+      "assets/gallery-covers/project 7/1.webp",
+      "assets/gallery-covers/project 7/2.webp",
+      "assets/gallery-covers/project 7/3.webp",
+      "assets/gallery-covers/project 7/4.webp",
+      "assets/gallery-covers/project 7/5.webp"
+    ],
+    "sourceFolder": "assets/gallery-covers/project 7",
+    "model": "assets/gallery-covers/project%207/GLB1.glb"
+  },
+  {
+    "id": "project-8",
+    "title": "Project 8",
+    "categories": [
+      "Metal",
+      "Prescription Glasses"
+    ],
+    "description": "A new eyewear design concept, shown from multiple product views.",
+    "cover": "assets/gallery-covers/Project 8/1%20(1).webp",
+    "photos": [
+      "assets/gallery-covers/Project 8/1%20(1).webp",
+      "assets/gallery-covers/Project 8/2.webp",
+      "assets/gallery-covers/Project 8/3.webp",
+      "assets/gallery-covers/Project 8/4.webp",
+      "assets/gallery-covers/Project 8/5.webp"
+    ],
+    "sourceFolder": "assets/gallery-covers/Project 8",
+    "model": "assets/gallery-covers/Project%208/GLB1.glb",
+    "faceModel": "assets/gallery-covers/Project%208/GLB2.glb"
+  },
+  {
+    "id": "127518s",
+    "title": "127518S",
+    "categories": [
+      "Acetate",
+      "Prescription Glasses"
+    ],
+    "description": "A new eyewear design concept, shown from multiple product views.",
+    "cover": "assets/gallery-covers/127518S/1.webp",
+    "photos": [
+      "assets/gallery-covers/127518S/1.webp",
+      "assets/gallery-covers/127518S/2.webp",
+      "assets/gallery-covers/127518S/3.webp",
+      "assets/gallery-covers/127518S/4.webp",
+      "assets/gallery-covers/127518S/5.webp"
+    ],
+    "sourceFolder": "assets/gallery-covers/127518S",
+    "model": "assets/gallery-covers/127518S/GLB1.glb"
+  }
+]

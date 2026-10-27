@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Try on eyewear designs using your phone camera.">
+  <title>Virtual Try-On — Mazen(BD) Industries LTD</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="try-on.css">
+  <link rel="stylesheet" href="theme.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/eyewear-icon-192.png">
+  <meta name="theme-color" content="#f3f0ea">
+</head>
+<body class="try-on-page">
+  <div class="try-on-shell">
+    <header class="try-on-header">
+      <a class="try-on-brand" href="gallery.html">
+        <img class="site-logo" src="assets/Logo/Mazen%20Logo.png" alt="Mazen(BD) Industries LTD">
+        <span>Virtual try-on</span>
+      </a>
+      <nav class="site-top-nav" aria-label="Site navigation">
+        <a href="gallery.html">Projects</a>
+        <a href="index.html">Home</a>
+        <button type="button" data-theme-toggle aria-label="Toggle color theme">Dark mode</button>
+      
+      <details class="site-tools-menu">
+        <summary class="site-tools-button" aria-label="Open tools menu"><span></span><span></span><span></span></summary>
+        <div class="site-tools-dropdown" aria-label="Tools">
+          <a href="configurator.html">Configurator <span aria-hidden="true">↗</span></a>
+          <a href="multi-configurator.html">Multi-model</a>
+          <a href="image-converter.html">Image tools</a>
+        </div>
+      </details>
+      </nav>
+    </header>
+
+    <main class="try-on-main">
+      <section class="try-on-intro">
+        <p class="try-on-eyebrow">CAMERA TRY-ON</p>
+        <h1 id="tryOnTitle">See how it <span>fits.</span></h1>
+        <p>Allow camera access and look toward the screen. Your camera feed is processed on this device and is not recorded or uploaded.</p>
+      </section>
+
+      <section class="try-on-workspace" aria-label="Virtual eyewear try-on">
+        <div class="try-on-preview" id="preview">
+          <video id="cameraVideo" autoplay playsinline muted aria-label="Mirrored live camera preview"></video>
+          <canvas id="tryOnCanvas" aria-hidden="true"></canvas>
+          <div class="try-on-placeholder" id="placeholder">
+            <span aria-hidden="true">◉</span>
+            <p>Your live preview will appear here</p>
+          </div>
+          <p class="try-on-status" id="tryOnStatus" role="status" aria-live="polite">Preparing try-on…</p>
+          <button class="try-on-flip" id="flipCamera" type="button" aria-label="Switch camera" title="Switch camera" hidden>↻</button>
+        </div>
+
+        <div class="try-on-controls">
+          <label class="try-on-upload">
+            <span>Try on your own model</span>
+            <input id="modelUpload" type="file" accept=".glb,model/gltf-binary">
+            <small id="modelUploadName">Choose a GLB model</small>
+          </label>
+          <div class="try-on-actions">
+            <button class="try-on-primary" id="startCamera" type="button" disabled>Start camera</button>
+            <button class="try-on-secondary" id="stopCamera" type="button" disabled>Stop camera</button>
+          </div>
+          <label class="try-on-slider">
+            <span>Frame size</span>
+            <input id="frameScale" type="range" min="0.5" max="2.6" step="0.01" value="1">
+            <output id="frameScaleValue" for="frameScale">1.00×</output>
+          </label>
+          <label class="try-on-slider">
+            <span>X position</span>
+            <input id="frameHorizontalOffset" type="range" min="-0.75" max="0.75" step="0.01" value="0">
+            <output id="frameHorizontalOffsetValue" for="frameHorizontalOffset">0.00</output>
+          </label>
+          <label class="try-on-slider">
+            <span>Y position</span>
+            <input id="frameOffset" type="range" min="-0.5" max="0.5" step="0.01" value="0">
+            <output id="frameOffsetValue" for="frameOffset">0.00</output>
+          </label>
+          <label class="try-on-slider">
+            <span>Z position</span>
+            <input id="frameDepthOffset" type="range" min="-1" max="1" step="0.01" value="0">
+            <output id="frameDepthOffsetValue" for="frameDepthOffset">0.00</output>
+          </label>
+          <p class="try-on-note">Position adjustments are measured relative to the distance between your eyes. Positive X moves right, positive Y moves up, and positive Z moves toward the camera.</p>
+          <p class="try-on-note">Upload a GLB eyewear model. Your model is loaded locally in your browser and is not uploaded.</p>
+          <p class="try-on-note">For privacy, video stays on your device. Camera access works on HTTPS or localhost; a regular local-network HTTP address may be blocked by your browser.</p>
+          <a class="try-on-back" id="backToProject" href="gallery.html">Back to project</a>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="theme.js"></script>
+  <script type="module" src="try-on.js"></script>
+  <script src="pwa.js"></script>
+</body>
+</html>

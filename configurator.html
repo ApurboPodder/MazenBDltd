@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Load and explore an eyewear model in the configurator.">
+  <title>Eyewear Configurator — Mazen(BD) Industries LTD</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="configurator.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/eyewear-icon-192.png">
+  <meta name="theme-color" content="#f3f0ea">
+</head>
+<body class="configurator-page">
+  <div class="configurator-app">
+    <header class="configurator-header">
+      <a class="configurator-brand" href="index.html">
+        <img class="site-logo" src="assets/Logo/Mazen%20Logo.png" alt="Mazen(BD) Industries LTD">
+        <span class="configurator-title">Eyewear configurator</span>
+      </a>
+      <nav class="configurator-nav site-top-nav" aria-label="Site navigation">
+        <a class="configurator-link" href="index.html">Home</a>
+        <a class="configurator-link" href="gallery.html">Project gallery</a>
+        <button class="configurator-link theme-switch" type="button" data-theme-toggle>Dark mode</button>
+      
+      <details class="site-tools-menu">
+        <summary class="site-tools-button" aria-label="Open tools menu"><span></span><span></span><span></span></summary>
+        <div class="site-tools-dropdown" aria-label="Tools">
+          <a class="configurator-link" href="configurator.html">Configurator <span aria-hidden="true">↗</span></a>
+          <a class="configurator-link" href="multi-configurator.html">Multi-model</a>
+          <a class="configurator-link" href="image-converter.html">Image tools</a>
+        </div>
+      </details>
+      </nav>
+    </header>
+
+    <main class="configurator-main">
+      <section class="model-viewer" aria-label="Eyewear model viewer">
+        <div class="viewer-heading">
+          <div>
+            <p class="eyebrow">INTERACTIVE PREVIEW</p>
+            <h1 id="modelName">Eyewear preview</h1>
+          </div>
+          <div class="viewer-options">
+            <label class="viewer-option"><input id="showFace" type="checkbox" checked disabled> Show face</label>
+            <label class="viewer-option"><input id="autoRotate" type="checkbox"> Auto rotate</label>
+          </div>
+        </div>
+        <div class="model-stage" id="modelStage">
+          <canvas id="modelCanvas" aria-label="Interactive 3D eyewear preview"></canvas>
+          <div class="model-empty" id="emptyPrompt">
+            <span class="model-empty-icon" aria-hidden="true">◇</span>
+            <h2>Bring your design into view.</h2>
+            <p>Load a self-contained GLB model to rotate and inspect your eyewear.</p>
+            <button class="primary-button" id="chooseModel" type="button">Choose a GLB model</button>
+            <span class="drop-hint">or drop a .glb file anywhere in the viewer</span>
+          </div>
+          <div class="model-error" id="modelError" role="alert" hidden></div>
+          <div class="drop-overlay" id="dropOverlay" aria-hidden="true">Drop GLB model to open</div>
+        </div>
+        <div class="viewer-toolbar" aria-label="View controls">
+          <button type="button" data-view="front" title="Front view">Front</button>
+          <button type="button" data-view="right" title="Right view">Right</button>
+          <button type="button" data-view="top" title="Top view">Top</button>
+          <button type="button" id="fitModel" title="Fit model in view">Fit</button>
+          <button type="button" id="resetView" title="Reset view">Reset</button>
+          <button type="button" id="clearModel" title="Remove current model" hidden>Remove model</button>
+        </div>
+        <div class="viewer-footer">
+          <span id="modelStatus" role="status" aria-live="polite">Ready for a self-contained .glb model.</span>
+          <span>Drag to orbit · Scroll to zoom · Right-drag to pan</span>
+        </div>
+      </section>
+      <aside class="configurator-aside">
+        <p class="eyebrow">MODEL</p>
+        <h2>Configure your view.</h2>
+        <p>Open a self-contained GLB eyewear model from your device. Your file stays on your device and is not uploaded.</p>
+        <label class="file-button" for="modelFile">Choose model file</label>
+        <input id="modelFile" type="file" accept=".glb,model/gltf-binary" hidden>
+        <p class="file-note">GLB only · Up to 70 MB · Internet required to load the viewer</p>
+        <div class="aside-divider"></div>
+        <fieldset class="face-position-controls" id="facePositionControls" disabled>
+          <legend>Face position</legend>
+          <label class="face-axis-control">
+            <span>X</span>
+            <input type="range" min="-0.12" max="0.12" step="0.001" value="0" data-face-axis="x">
+            <input class="face-axis-number" type="number" min="-0.12" max="0.12" step="0.001" value="0" aria-label="X position value" data-face-value="x">
+          </label>
+          <label class="face-axis-control">
+            <span>Y</span>
+            <input type="range" min="-0.12" max="0.12" step="0.001" value="0" data-face-axis="y">
+            <input class="face-axis-number" type="number" min="-0.12" max="0.12" step="0.001" value="0" aria-label="Y position value" data-face-value="y">
+          </label>
+          <label class="face-axis-control">
+            <span>Z</span>
+            <input type="range" min="-0.12" max="0.12" step="0.001" value="0" data-face-axis="z">
+            <input class="face-axis-number" type="number" min="-0.12" max="0.12" step="0.001" value="0" aria-label="Z position value" data-face-value="z">
+          </label>
+        </fieldset>
+        <div class="aside-divider"></div>
+        <fieldset class="model-rotation-controls" id="modelRotationControls" disabled>
+          <legend>Model rotation · degrees</legend>
+          <label class="face-axis-control">
+            <span>X</span>
+            <input type="range" min="-180" max="180" step="1" value="0" data-model-rotation-axis="x">
+            <input class="face-axis-number" type="number" min="-180" max="180" step="1" value="0" aria-label="Model X rotation in degrees" data-model-rotation-value="x">
+          </label>
+          <label class="face-axis-control">
+            <span>Y</span>
+            <input type="range" min="-180" max="180" step="1" value="0" data-model-rotation-axis="y">
+            <input class="face-axis-number" type="number" min="-180" max="180" step="1" value="0" aria-label="Model Y rotation in degrees" data-model-rotation-value="y">
+          </label>
+          <label class="face-axis-control">
+            <span>Z</span>
+            <input type="range" min="-180" max="180" step="1" value="0" data-model-rotation-axis="z">
+            <input class="face-axis-number" type="number" min="-180" max="180" step="1" value="0" aria-label="Model Z rotation in degrees" data-model-rotation-value="z">
+          </label>
+        </fieldset>
+        <div class="aside-divider"></div>
+        <p class="eyebrow">NAVIGATION</p>
+        <ul class="navigation-help">
+          <li><span>Orbit</span><span>Left-drag</span></li>
+          <li><span>Pan</span><span>Right-drag</span></li>
+          <li><span>Zoom</span><span>Scroll</span></li>
+        </ul>
+      </aside>
+    </main>
+    <footer class="configurator-footer">
+      <span>MAZEN(BD) INDUSTRIES LTD</span>
+      <span>Private local model preview</span>
+    </footer>
+  </div>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script src="theme.js"></script>
+  <script type="module" src="app.js"></script>
+  <script src="pwa.js"></script>
+</body>
+</html>

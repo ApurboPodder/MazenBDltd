@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Add a Project — Mazen(BD) Industries LTD</title>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/eyewear-icon-192.png">
+  <meta name="theme-color" content="#f3f0ea">
+</head>
+<body class="admin-page">
+  <div class="admin-app">
+    <header class="admin-header">
+      <a href="gallery.html" class="admin-brand">
+        <img class="site-logo" src="assets/Logo/Mazen%20Logo.png" alt="Mazen(BD) Industries LTD">
+        <span>Project publishing</span>
+      </a>
+      <a class="admin-back" href="gallery.html">← Back to gallery</a>
+      <button class="admin-theme-toggle" type="button" data-theme-toggle>Dark mode</button>
+      <details class="site-tools-menu">
+        <summary class="site-tools-button" aria-label="Open tools menu"><span></span><span></span><span></span></summary>
+        <div class="site-tools-dropdown" aria-label="Tools">
+          <a href="configurator.html">Configurator <span aria-hidden="true">↗</span></a>
+          <a href="multi-configurator.html">Multi-model</a>
+          <a href="image-converter.html">Image tools</a>
+        </div>
+      </details>
+    </header>
+
+    <main class="admin-main">
+      <p class="admin-eyebrow">PROJECT ADMIN · GITHUB PAGES OR VERCEL</p>
+      <h1>Add a project.</h1>
+      <p class="admin-lede">Upload a project to Vercel or save it into your local website folder. For GitHub Pages, choose your local repository clone, then commit and push the saved files to publish. Images are converted to WebP before being saved.</p>
+
+      <form id="projectForm">
+        <section class="admin-section" id="cloudUploadSection" aria-labelledby="cloudUploadHeading" hidden>
+          <h2 id="cloudUploadHeading">Vercel upload</h2>
+          <label for="uploadPassword">Upload password
+            <input id="uploadPassword" name="uploadPassword" type="password" autocomplete="current-password">
+          </label>
+          <p class="admin-help" id="cloudUploadStatus" role="status" aria-live="polite">Checking Vercel upload service…</p>
+        </section>
+
+        <section class="admin-section" id="localFolderSection" aria-labelledby="folderHeading">
+          <h2 id="folderHeading">GitHub Pages or local website</h2>
+          <button id="chooseFolder" class="admin-folder-button" type="button">Choose repository / website folder</button>
+          <p class="admin-help" id="folderStatus" role="status" aria-live="polite">Choose your local repository root (or website root) containing project-data.json and assets. GitHub Pages deploys the saved changes after you commit and push them to the publishing branch.</p>
+        </section>
+
+        <section class="admin-section" aria-labelledby="projectHeading">
+          <h2 id="projectHeading">Project files</h2>
+          <label>Project name
+            <input id="projectTitle" name="title" required maxlength="80" placeholder="Violet Acetate">
+          </label>
+          <fieldset class="category-options">
+            <legend>Categories (choose one or more)</legend>
+            <label><input type="checkbox" name="projectCategory" value="Acetate"> Acetate</label>
+            <label><input type="checkbox" name="projectCategory" value="Metal"> Metal</label>
+            <label><input type="checkbox" name="projectCategory" value="Injection"> Injection</label>
+            <label><input type="checkbox" name="projectCategory" value="Sunglass"> Sunglass</label>
+            <label><input type="checkbox" name="projectCategory" value="Prescription Glasses"> Prescription Glasses</label>
+          </fieldset>
+          <div class="admin-fields">
+            <label>Images
+              <input id="imageFiles" name="images" type="file" accept="image/*" multiple required>
+              <span class="admin-help">Select one or more images. Supported files are converted to WebP automatically; the first filename alphabetically becomes the cover.</span>
+            </label>
+            <label>GLB models (optional)
+              <input id="modelFiles" name="models" type="file" accept=".glb,model/gltf-binary" multiple>
+              <span class="admin-help">Select GLB files, up to 70 MB each. Files are paired alphabetically.</span>
+            </label>
+          </div>
+        </section>
+
+        <div class="admin-submit">
+          <button id="publishButton" type="submit" disabled>Save project to site</button>
+          <span id="publishStatus" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+
+      <aside class="admin-note">
+        Vercel uploads require a connected public Blob store and the PROJECT_UPLOAD_PASSWORD environment variable in Vercel. For GitHub Pages, select your local repository clone and commit/push the saved files to the publishing branch. Folder editing requires Chrome or Edge on HTTPS or localhost.
+      </aside>
+    </main>
+  </div>
+  <script src="theme.js"></script>
+  <script src="project-discovery.js"></script>
+  <script src="admin.js"></script>
+  <script src="pwa.js"></script>
+</body>
+</html>

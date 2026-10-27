@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Remove image backgrounds with on-device AI and convert images to WebP.">
+  <title>Image tools — Mazen(BD) Industries LTD</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="image-converter.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/eyewear-icon-192.png">
+  <meta name="theme-color" content="#f3f0ea">
+</head>
+<body class="converter-page">
+  <div class="converter-app">
+    <header class="converter-header">
+      <a class="converter-brand" href="index.html">
+        <img class="site-logo" src="assets/Logo/Mazen%20Logo.png" alt="Mazen(BD) Industries LTD">
+        <span>Image tools</span>
+      </a>
+      <nav class="site-top-nav" aria-label="Site navigation">
+        <a href="gallery.html">Projects</a>
+        <a href="index.html">Home</a>
+        <button class="converter-theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">Dark mode</button>
+      
+      <details class="site-tools-menu">
+        <summary class="site-tools-button" aria-label="Open tools menu"><span></span><span></span><span></span></summary>
+        <div class="site-tools-dropdown" aria-label="Tools">
+          <a href="configurator.html">Configurator <span aria-hidden="true">↗</span></a>
+          <a href="multi-configurator.html">Multi-model</a>
+          <a href="image-converter.html">Image tools</a>
+        </div>
+      </details>
+      </nav>
+    </header>
+
+    <main class="converter-main">
+      <section class="converter-intro">
+        <p class="converter-eyebrow">ON-DEVICE AI · PRIVATE IMAGE PROCESSING</p>
+        <h1>Clean images.<br><span>Simply.</span></h1>
+        <p>Remove image backgrounds with a higher-accuracy AI mask, then erase missed areas such as eyeglass lenses by hand. Export on white or transparent.</p>
+      </section>
+
+      <section class="converter-panel" aria-label="Image conversion">
+        <label class="converter-dropzone" id="dropzone" for="imageFiles">
+          <input id="imageFiles" type="file" accept="image/*" multiple hidden>
+          <span class="converter-upload-icon" aria-hidden="true">↑</span>
+          <span class="converter-drop-title">Drop images here or <span>browse files</span></span>
+          <span class="converter-drop-help">JPEG, PNG, GIF, AVIF, BMP, TIFF, and other browser-supported image formats</span>
+        </label>
+
+        <div class="converter-options">
+          <label class="mode-control" for="processMode">
+            <span>Image action</span>
+            <select id="processMode">
+              <option value="remove-background">Remove background</option>
+              <option value="convert">Convert image</option>
+            </select>
+          </label>
+          <label class="mode-control" for="backgroundMode">
+            <span>Background</span>
+            <select id="backgroundMode">
+              <option value="white">White</option>
+              <option value="transparent">Transparent</option>
+            </select>
+          </label>
+          <label class="mode-control" for="outputFormat">
+            <span>Download format</span>
+            <select id="outputFormat">
+              <option value="image/png">PNG</option>
+              <option value="image/jpeg">JPEG</option>
+              <option value="image/webp">WebP</option>
+            </select>
+          </label>
+          <label class="quality-control" for="quality">
+            <span>Image quality</span>
+            <input id="quality" type="range" min="10" max="100" value="85">
+            <output id="qualityValue" for="quality">85%</output>
+          </label>
+          <p id="modeHelp">AI estimates the mask; use Edit mask to erase transparent lens areas the AI cannot identify. Original pixels remain unchanged.</p>
+        </div>
+
+        <div class="converter-queue-header">
+          <div>
+            <h2>Files <span id="fileCount">(0)</span></h2>
+            <p id="queueStatus" role="status" aria-live="polite">Add images to get started.</p>
+          </div>
+          <div class="converter-actions">
+            <button id="clearFiles" class="converter-button converter-button-secondary" type="button" disabled>Clear</button>
+            <button id="convertAll" class="converter-button converter-button-primary" type="button" disabled>Process all</button>
+            <button id="downloadAll" class="converter-button converter-button-secondary" type="button" disabled>Download all (.zip)</button>
+          </div>
+        </div>
+
+        <ul class="converter-file-list" id="fileList" aria-label="Files to convert"></ul>
+      </section>
+      <p class="converter-note">Background removal runs locally after the AI model loads. It requires an internet connection on first use. This tool uses the AGPL-licensed <a href="https://github.com/imgly/background-removal-js" target="_blank" rel="noopener noreferrer">IMG.LY background-removal library</a>; review its license before deploying this site.</p>
+    </main>
+
+    <dialog class="mask-editor-dialog" id="maskEditorDialog" aria-labelledby="maskEditorTitle">
+      <div class="mask-editor">
+        <header class="mask-editor-header">
+          <div>
+            <h2 id="maskEditorTitle">Refine the background mask</h2>
+            <p id="maskEditorHelp">Paint over lens openings or missed background areas to erase them. Use +/−, Fit, or the mouse wheel to zoom.</p>
+          </div>
+          <button class="converter-button converter-button-secondary" id="closeMaskEditor" type="button">Close</button>
+        </header>
+        <div class="mask-editor-toolbar">
+          <label class="mode-control" for="maskBrushMode">
+            <span>Brush</span>
+            <select id="maskBrushMode">
+              <option value="erase">Erase background</option>
+              <option value="restore">Restore original</option>
+            </select>
+          </label>
+          <label class="mask-brush-size" for="maskBrushSize">
+            <span>Brush size</span>
+            <input id="maskBrushSize" type="range" min="4" max="100" value="28">
+            <output id="maskBrushSizeValue" for="maskBrushSize">28 px</output>
+          </label>
+          <div class="mask-zoom-controls" aria-label="Mask editor zoom controls">
+            <button class="converter-button converter-button-secondary" id="zoomOutMask" type="button" aria-label="Zoom out">−</button>
+            <output id="maskZoomValue" aria-live="polite">100%</output>
+            <button class="converter-button converter-button-secondary" id="zoomInMask" type="button" aria-label="Zoom in">+</button>
+            <button class="converter-button converter-button-secondary" id="resetMaskZoom" type="button">Fit</button>
+          </div>
+          <button class="converter-button converter-button-primary" id="saveMaskEdits" type="button">Apply edits</button>
+        </div>
+        <div class="mask-editor-canvas-wrap">
+          <canvas id="maskEditorCanvas" aria-label="Image mask editor. Paint over an area to erase it or restore original pixels."></canvas>
+        </div>
+      </div>
+    </dialog>
+
+    <footer class="converter-footer">
+      <span>MAZEN(BD) INDUSTRIES LTD</span>
+      <span>Images remain on your device; the AI model loads from IMG.LY.</span>
+    </footer>
+  </div>
+  <script src="theme.js"></script>
+  <script src="image-converter.js"></script>
+  <script src="pwa.js"></script>
+</body>
+</html>

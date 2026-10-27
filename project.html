@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project — Mazen(BD) Industries LTD</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="gallery.css">
+  <link rel="stylesheet" href="project.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/eyewear-icon-192.png">
+  <meta name="theme-color" content="#f3f0ea">
+</head>
+<body class="gallery-page project-page">
+  <div class="gallery-app">
+    <header class="gallery-header">
+      <a class="brand-link" href="index.html" aria-label="Mazen(bd) Industries LTD — Home">
+        <img class="site-logo" src="assets/Logo/Mazen%20Logo.png" alt="Mazen(BD) Industries LTD">
+        <span class="brand-title">Project details</span>
+      </a>
+      <nav class="gallery-header-nav site-top-nav" aria-label="Site navigation">
+        <a class="gallery-link" href="index.html">Home</a>
+        <a class="gallery-link" href="gallery.html">All projects</a>
+        <button class="gallery-link theme-switch" type="button" data-theme-toggle>Dark mode</button>
+      
+      <details class="site-tools-menu">
+        <summary class="site-tools-button" aria-label="Open tools menu"><span></span><span></span><span></span></summary>
+        <div class="site-tools-dropdown" aria-label="Tools">
+          <a class="gallery-link" href="configurator.html">Configurator <span aria-hidden="true">↗</span></a>
+          <a class="gallery-link" href="multi-configurator.html">Multi-model</a>
+          <a class="gallery-link" href="image-converter.html">Image tools</a>
+        </div>
+      </details>
+      </nav>
+    </header>
+
+    <main class="project-detail-main">
+      <a class="project-back-link" href="gallery.html">← Back to all projects</a>
+      <section id="projectDetail" class="project-detail" aria-live="polite">
+        <div class="project-detail-copy">
+          <p class="eyebrow" id="projectCategory">PROJECT</p>
+          <h1 id="projectTitle">Loading project…</h1>
+          <p class="project-detail-description" id="projectDescription"></p>
+          <a class="project-configurator-link" id="projectConfiguratorLink" href="#" hidden>Open Model In 3D Viewer <span aria-hidden="true">↗</span></a>
+          <a class="project-configurator-link project-try-on-link" id="projectTryOnLink" href="#" hidden>Try on with camera <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="project-detail-gallery">
+          <section class="project-model-preview" id="projectModelPreview" aria-label="3D eyewear preview" hidden>
+            <div class="project-model-preview-heading">
+              <h2>3D model preview</h2>
+              <span>Drag to rotate</span>
+            </div>
+            <div class="project-model-preview-window">
+              <canvas id="projectModelCanvas" aria-label="Interactive 3D eyewear model without a face; drag to rotate"></canvas>
+              <p class="project-model-preview-status" id="projectModelStatus" role="status" aria-live="polite">Loading 3D model…</p>
+            </div>
+          </section>
+          <div class="project-detail-images" id="projectImages" aria-label="Project images"></div>
+        </div>
+      </section>
+      <p class="project-detail-status" id="projectStatus" role="status" aria-live="polite"></p>
+    </main>
+
+    <footer class="gallery-footer">
+      <span>MAZEN(BD) INDUSTRIES LTD</span>
+      <span>Eyewear, made personal.</span>
+    </footer>
+  </div>
+  <dialog class="project-image-lightbox" id="projectImageLightbox" aria-label="Project image gallery">
+    <button class="project-image-lightbox-close" id="projectImageLightboxClose" type="button" aria-label="Close image">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="m6 6 12 12M18 6 6 18"></path>
+      </svg>
+    </button>
+    <button class="project-image-lightbox-previous" id="projectImageLightboxPrevious" type="button" aria-label="Previous image">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="m14.5 5-7 7 7 7"></path>
+      </svg>
+    </button>
+    <figure class="project-image-lightbox-content">
+      <img id="projectImageLightboxImage" alt="">
+      <figcaption id="projectImageLightboxCaption"></figcaption>
+    </figure>
+    <button class="project-image-lightbox-next" id="projectImageLightboxNext" type="button" aria-label="Next image">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="m9.5 5 7 7-7 7"></path>
+      </svg>
+    </button>
+  </dialog>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script src="theme.js"></script>
+  <script src="project-discovery.js"></script>
+  <script src="project.js"></script>
+  <script src="pwa.js"></script>
+</body>
+</html>

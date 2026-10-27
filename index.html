@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Discover considered eyewear design from Mazen(BD) Industries LTD.">
+  <title>Mazen(BD) Industries LTD — Eyewear, made personal</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="home.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/eyewear-icon-192.png">
+  <meta name="theme-color" content="#f3f0ea">
+</head>
+<body class="home-page">
+  <div class="home-shell">
+    <header class="home-header">
+      <a class="home-brand" href="index.html">
+        <img class="site-logo home-site-logo" src="assets/Logo/Mazen%20Logo.png" alt="Mazen(BD) Industries LTD">
+        <span class="home-brand-name">MAZEN (BD) INDUSTRIES LTD</span>
+      </a>
+      <nav class="home-nav site-top-nav" aria-label="Main navigation">
+        <a href="gallery.html">Projects</a>
+        <a href="try-on.html">AR Viewer</a>
+        <button class="contact-trigger" type="button" aria-haspopup="dialog" aria-controls="contactDialog">Contact</button>
+        <button class="theme-switch" type="button" data-theme-toggle aria-label="Toggle color theme">Dark mode</button>
+      
+      <details class="site-tools-menu">
+        <summary class="site-tools-button" aria-label="Open tools menu"><span></span><span></span><span></span></summary>
+        <div class="site-tools-dropdown" aria-label="Tools">
+          <a href="configurator.html">Configurator <span aria-hidden="true">↗</span></a>
+          <a href="multi-configurator.html">Multi-model</a>
+          <a href="image-converter.html">Image tools</a>
+        </div>
+      </details>
+      </nav>
+    </header>
+
+    <main>
+      <section class="home-hero" aria-labelledby="homeTitle">
+        <div class="hero-wash" aria-hidden="true"></div>
+
+        <div class="hero-copy">
+          <h1 id="homeTitle">A clearer point<br>of <em>view.</em></h1>
+          <p class="hero-description">Thoughtful frames, considered from every angle. Explore a collection shaped by form, material, and the people who wear it.</p>
+          <div class="hero-actions">
+            <a class="hero-button hero-button-dark" href="gallery.html">Explore the collection <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+
+        <div class="hero-model-wrap">
+          <div class="model-orbit-label"><span id="homeModelLabel">MODERN DESIGN / 05</span></div>
+          <canvas id="homeModel" aria-label="Interactive 3D modern eyewear preview; drag to rotate"></canvas>
+          <button class="model-navigation model-navigation-previous" id="homeModelPrevious" type="button" aria-label="Show previous eyewear model" aria-controls="homeModel">‹</button>
+          <button class="model-navigation model-navigation-next" id="homeModelNext" type="button" aria-label="Show next eyewear model" aria-controls="homeModel">›</button>
+          <div class="model-loading" id="homeModelStatus" role="status" aria-live="polite">Preparing the 3D preview…</div>
+          <a class="model-caption" id="homeModelProject" href="project.html?project=5">
+            <span id="homeModelProjectTitle">Modern Design</span>
+            <span>View project <b aria-hidden="true">↗</b></span>
+          </a>
+        </div>
+        <div class="hero-bottom-note"><span>MAZEN(BD) INDUSTRIES LTD</span><span>Eyewear, made personal.</span></div>
+      </section>
+      <section class="home-contact-footer" aria-label="Contact information">
+        <span class="home-contact-label">Get in touch</span>
+        <address>Uttara EPZ, Nilphamari, Bangladesh</address>
+        <a href="tel:+8801799278146">+880 179 9278 146</a>
+        <a href="https://mazen.group/" target="_blank" rel="noopener noreferrer">mazen.group <span aria-hidden="true">↗</span></a>
+      </section>
+    </main>
+  </div>
+
+  <dialog class="contact-dialog" id="contactDialog" aria-labelledby="contactTitle">
+    <div class="contact-dialog-header">
+      <p class="home-eyebrow"><span></span> Mazen(BD) Industries LTD</p>
+      <button class="contact-close" type="button" aria-label="Close contact information" data-contact-close>&times;</button>
+    </div>
+    <h2 id="contactTitle">Contact &amp; Factory Details</h2>
+    <p class="contact-branch">Mazen Branch: Bangladesh</p>
+    <div class="contact-details">
+      <div class="contact-details-primary">
+        <p class="contact-dialog-label">Address</p>
+        <address>Plot # 02-21, Sector-03, Uttara EPZ, Nilphamari, Bangladesh.</address>
+        <p class="contact-dialog-label">General line</p>
+        <a class="contact-website" href="tel:+8801799278146">+880 179 9278 146</a>
+        <p class="contact-dialog-label">Website</p>
+        <a class="contact-website" href="https://mazen.group/" target="_blank" rel="noopener noreferrer">mazen.group <span aria-hidden="true">↗</span></a>
+      </div>
+      <dl class="factory-details">
+        <div><dt>Name of factory</dt><dd>Mazen (BD) Industries LTD</dd></div>
+        <div><dt>Established</dt><dd>2012</dd></div>
+        <div><dt>Factory size</dt><dd>41,000 sqm</dd></div>
+        <div><dt>Quality certification</dt><dd>ISO 9001:2015, Certificate No. 99 100 17784; Sedex 4 pillars</dd></div>
+        <div><dt>Employees</dt><dd>4,000</dd></div>
+        <div><dt>Main production</dt><dd>Metal 50% / Plastic 50%</dd></div>
+        <div><dt>Plastic department</dt><dd>10,000–12,000 pcs per day</dd></div>
+        <div><dt>Metal department</dt><dd>10,000–12,000 pcs per day</dd></div>
+      </dl>
+    </div>
+  </dialog>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script src="theme.js"></script>
+  <script src="project-discovery.js"></script>
+  <script type="module" src="home.js"></script>
+  <script src="pwa.js"></script>
+</body>
+</html>
