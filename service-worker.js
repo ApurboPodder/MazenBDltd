@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "mazen-eyewear-pwa-";
-const CACHE_NAME = CACHE_PREFIX + "v35";
+const CACHE_NAME = CACHE_PREFIX + "v38";
 const APP_FILES = [
   "./",
   "./index.html",

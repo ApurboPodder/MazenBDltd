@@ -7,6 +7,9 @@
   const images = document.getElementById("projectImages");
   const configuratorLink = document.getElementById("projectConfiguratorLink");
   const tryOnLink = document.getElementById("projectTryOnLink");
+  const shareButton = document.getElementById("projectShareButton");
+  const standaloneMode = params.get("standalone") === "1";
+  document.body.classList.toggle("project-standalone", standaloneMode);
   const modelPreview = document.getElementById("projectModelPreview");
   const modelCanvas = document.getElementById("projectModelCanvas");
   const modelStatus = document.getElementById("projectModelStatus");
@@ -15,6 +18,25 @@
   const lightboxImage = document.getElementById("projectImageLightboxImage");
   const lightboxCaption = document.getElementById("projectImageLightboxCaption");
   const lightboxContent = document.querySelector(".project-image-lightbox-content");
+  shareButton.addEventListener("click", async () => {
+    const shareUrl = new URL("project.html", window.location.href);
+    shareUrl.searchParams.set("project", projectId);
+    shareUrl.searchParams.set("standalone", "1");
+    const shareData = { title: title.textContent + " — Mazen(BD) Industries LTD", url: shareUrl.href };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareUrl.href);
+        shareButton.textContent = "Link copied";
+        window.setTimeout(() => { shareButton.textContent = "Share standalone project"; }, 2000);
+      } else {
+        window.prompt("Copy this standalone project link:", shareUrl.href);
+      }
+    } catch (error) {
+      if (error.name !== "AbortError") console.error("Could not share the project link", error);
+    }
+  });
   let projectImages = [];
   let activeImageIndex = 0;
   let imageZoom = 1;
@@ -192,6 +214,7 @@
     category.textContent = projectCategories.join(" · ").toUpperCase();
     description.textContent = project.description;
     status.textContent = "";
+    shareButton.hidden = false;
     configuratorLink.hidden = true;
     tryOnLink.hidden = true;
     modelPreview.hidden = true;

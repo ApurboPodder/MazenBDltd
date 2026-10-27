@@ -92,3 +92,25 @@
   .glb-studio-page .glb-studio-controls { position: absolute; top: calc(46% - min(27svh, 250px) + 12px); right: 12px; left: auto; display: grid; width: min(170px, 46vw); max-width: 170px; align-items: stretch; gap: 4px; padding: 7px; transform: none; }
   .glb-studio-page .studio-face-status { max-width: none; text-align: left; }
 }
+
+
+/* Use the full desktop width while reserving only the right-side controls. */
+@media (min-width: 901px) {
+  .glb-studio-page .home-hero { --studio-preview-width: min(1400px, calc(100% - 206px)); }
+  .glb-studio-page .hero-model-wrap { left: calc(50% - 103px); width: var(--studio-preview-width); }
+  .glb-studio-page .glb-studio-controls { right: 0; left: auto; }
+  .glb-studio-page .glb-studio-toolbar .model-navigation { right: auto; left: calc(50% - 103px - var(--studio-preview-width) / 2 + 12px); }
+  .glb-studio-page .glb-studio-toolbar .model-navigation-next { left: calc(50% - 103px + var(--studio-preview-width) / 2 - 52px); }
+}
+
+
+/* Taller preview frame, with controls and navigation kept aligned to it. */
+@media (min-width: 901px) {
+  .glb-studio-page .hero-model-wrap { height: min(78svh, 780px); }
+  .glb-studio-page .glb-studio-controls { top: calc(50% - min(39svh, 390px) + 16px); }
+}
+@media (max-width: 900px) {
+  .glb-studio-page .hero-model-wrap { top: 46%; height: min(66svh, 620px); min-height: 300px; }
+  .glb-studio-page .glb-studio-toolbar { top: calc(46% + min(33svh, 310px) + 10px); }
+  .glb-studio-page .glb-studio-controls { top: calc(46% - min(33svh, 310px) + 12px); }
+}
