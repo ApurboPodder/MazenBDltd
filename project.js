@@ -320,7 +320,7 @@
           "assets/gallery-covers/project%205/shape%201%205.webp",
           "assets/gallery-covers/project%205/shape%201%206.webp",
         ],
-        model: "assets/gallery-covers/project 5/shape A glb.glb",
+        model: "assets/gallery-covers/project%205/GLB1.glb",
       },
     };
 
